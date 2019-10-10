@@ -33,11 +33,39 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
 
 
 //获取单个信息一行信息 参数路由
-//  这里有小坑，如果直接查_id,findById/findOne，找到就找到，找不到直接报错
+// 
 router.get('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
   profileModel.findById(req.params.id).then(data => {
+    if (!data) {
+      return res.json({ errCode: 0, msg: `id号${req.params.id}信息不存在` })
+    }
     res.json(data)
-  }).catch(err => res.json({err:0,msg:`id号${req.params.id}信息不存在`})) //没找到直接就报错
+  })
+})
+
+// 编辑信息接口 更新数据
+router.post('/edit/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  // 必须验证输入的数据
+  let infoFields = {}
+  let { type, describe, income, expend, cash, remark } = req.body
+  infoFields.type = type || false
+  infoFields.describe = describe || false
+  infoFields.income = income || false
+  infoFields.expend = expend || false
+  infoFields.cash = cash || false
+  infoFields.remark = remark || false
+  //也就是说post请求也可以拿到params参数
+  console.log(req.params.id)
+  profileModel.updateOne({ _id: req.params.id }, infoFields).
+    then(data => res.json({...data,errCode:0,msg:'信息更新成功'})).
+    catch(err => res.json(err))
+
+})
+// 删除信息删除一条记录接口
+router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  profileModel.deleteOne({ _id: req.params.id })
+    .then(data => { res.json({ ...data,errCode: 0, msg: '删除成功' }) })
+    .catch(err => res.json(err))
 })
 
 module.exports = router //obj
