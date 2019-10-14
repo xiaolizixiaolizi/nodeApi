@@ -1,25 +1,60 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      redirect: '/register'
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    }
+      path: '/home',
+      name: 'home',
+      component: () => import('./views/Home.vue')
+
+    },
+
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('views/register/Register.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('views/login/Login.vue')
+    },
+    {
+      path:'/test',
+      name:'name',
+      component:()=>import('views/test/Test.vue')
+    },
+    // 404要放在最后面
+    {
+      path: '*',
+      name: 'notFound',
+      component: () => import('views/404/NotFound.vue')
+    },
+
   ]
 })
+
+// 路由收尾
+router.beforeEach((to, from, next) => {
+  // 
+  let isLogin = localStorage.getItem('userToken') ? true : false
+ 
+  if (to.path == '/login' || to.path == "/register") {
+    next()
+  }
+  else {
+    // 访问其他页面，首先判断是否登录，登录正常访问， 没有登录就定向到login页面
+    isLogin ? next() : next('/login')
+  }
+})
+export default router

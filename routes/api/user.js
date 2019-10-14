@@ -13,7 +13,7 @@ const router = express.Router()
 router.post('/register', (req, res) => {
   userModel.findOne({ stu_id: req.body.stu_id }).then(user => {
     if (user) {
-      return res.json({ stu_id: 'stu_id重复' })
+      return res.json({ errCode: 100, message: '该学号以被注册,请立即登录' })
     }
     // 密码加密异步
     bcrypt.genSalt(10, (err, salt) => {
@@ -49,9 +49,9 @@ router.post('/login', (req, res) => {
         return res.json({ password: '密码输入错误' })
       }
       // 学号存在并且密码输入正确返回一个token
-      // jwt.sign(自定义规则，加密名字如'secret'，{过期时间}，箭头函数)
-      let rule = { stu_id: user.stu_id, password: user.password }
-      jwt.sign(rule, secret, { expiresIn: 3600 * 10 }, (err, token) => {
+      // jwt.sign(自定义规则，加密名字如'secret'，{过期时间 s 3600*10}，箭头函数)
+      let rule = { stu_id: user.stu_id, password: user.password, identity: user.identity, email: user.email }
+      jwt.sign(rule, secret, { expiresIn: 3600*10 }, (err, token) => {
         if (err) return console.log(err)
         res.json({ success: true, token: `Bearer ${token}` })
       })

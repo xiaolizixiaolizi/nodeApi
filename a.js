@@ -1,11 +1,10 @@
-let obj = { name: 'zs', age: 10, gender: 'male' }
-let { name, age, id } = obj
-console.log(name, age, id) //zs 10 undefined
-let arr=[]
-console.log(arr==false) //true
-console.log(arr==0) //true
-console.log(arr.length) //0
-console.log({}==false)
-if(arr){ //空数组也成立
-  console.log(100)
+function isEmpty(value) {
+  return (
+    value === undefined ||
+    value === null ||
+    (typeof value === 'object' && Object.keys(value).length === 0) ||
+    (typeof value === 'string' && value.trim().length === 0)
+  )
 }
+let res = isEmpty('') //''=>true 100=>false
+console.log(res)

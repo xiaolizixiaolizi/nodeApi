@@ -1,5 +1,25 @@
 module.exports = {
   presets: [
-    '@vue/app'
+    '@vue/app',
+    ['@babel/preset-env',      //添加 babel-preset-env 配置 
+      {
+        'modules': false
+      }
+    ]
+  ],
+  plugins: [   
+    [
+      'component',
+      {
+        'libraryName': 'element-ui',
+        'styleLibraryName': 'theme-chalk'
+      }
+    ],
+    // ['import', {
+    //   libraryName: 'vant',
+    //   libraryDirectory: 'es',
+    //   style: true
+    // }, 'vant']
   ]
+
 }
